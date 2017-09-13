@@ -1,0 +1,2 @@
+file.upload.dir=E:/uploadfile/files
+file.upload.maxSize=1048576000

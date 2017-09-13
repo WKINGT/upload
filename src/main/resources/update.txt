@@ -1,0 +1,4 @@
+version=1.0.3
+url=http://192.168.10.56:8080/upload/update.zip
+description=["1.新加了XXXXXXXXXXXXXXXX功能","2.新加了XXX功能","3.完善了XXX功能","4.修复了XXX功能"]
+md5=
