@@ -19,6 +19,7 @@ public class TableKit {
 
 	static{
 		map.put("chunk_file", ChunkFile.class);
+		map.put("file_info", FileInfo.class);
 		map.put("file_mark", FileMark.class);
 		map.put("file_upload", FileUpload.class);
 		map.put("upload_whole_file", UploadWholeFile.class);

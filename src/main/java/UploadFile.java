@@ -10,10 +10,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.net.URLConnection;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.impl.Log4jLoggerFactory;
@@ -32,7 +30,7 @@ public class UploadFile {
 	private final int CHUNKSIZE = 1024 * 1024 * 4;
 
 	private final String URLSTR = "http://127.0.0.1:8080/upload/uploadSliceFile";
-	
+    private static String TURL = "http://127.0.0.1:8080/upload/downLoadFormUrl";
 	private final String URL_WHOLE_FILE_UPLOAD = "http://127.0.0.1:8080/upload/uploadWholeFile";
 	/**
 	 * 上传文件信息
@@ -79,9 +77,8 @@ public class UploadFile {
 		}else{
 			uploadFileMsg(file);
 		}
-		
-		
-	}
+
+    }
     /**
      * 上传分块
      * @param file
@@ -389,16 +386,62 @@ public class UploadFile {
 
     public static void main(String[] args) {  
 //      String filepath = "D:\\Sc.eps";  
-    	String filepath = "F:\\AN University City Scenes&Detail FP.psd";  
+//    	String filepath = "F:\\AN University City Scenes&Detail FP.psd";
     	//测试整个文件上传
 //    	File file = new File(filepath);
 //    	System.out.println(GetBigFileMD5.getMD5(file));
 //    	System.out.println("测试整个文件上传");
 //        new UploadFile().uploadWholeFile(new File(filepath));
 //        //测试文件分片上传
-        System.out.println("测试文件分片上传");
-        new UploadFile().uploadFileMsg(new File(filepath));
-    }  
+//        System.out.println("测试文件分片上传");
+//        new UploadFile().uploadFileMsg(new File(filepath));
+        System.out.println(sendGet(TURL,"url=//5b0988e595225.cdn.sohucs.com/images/20180103/015c15f147434b43b019b26cc9ea4ab0.jpeg"));
+
+    }
+    public static String sendGet(String url, String param) {
+        String result = "";
+        BufferedReader in = null;
+        try {
+            String urlNameString = url + "?" + param;
+            URL realUrl = new URL(urlNameString);
+            // 打开和URL之间的连接
+            URLConnection connection = realUrl.openConnection();
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            Map<String, List<String>> map = connection.getHeaderFields();
+            // 遍历所有的响应头字段
+//            for (String key : map.keySet()) {
+//                System.out.println(key + "--->" + map.get(key));
+//            }
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+            System.out.println("发送GET请求出现异常！" + e);
+            e.printStackTrace();
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return result;
+    }
     
     public void uploadWholeFile(File file){
 		
@@ -414,7 +457,6 @@ public class UploadFile {
 //		wholeFile.setMimeType(GetName.getMimeType(file));
 		wholeFile.setMimeType(null);
 		wholeFile.setSize(filelength);
-		
 		Map<String, String> entityMap = new HashMap<String, String>();
 		entityMap.put("UploadWholeFileMsg", JSON.toJSONString(wholeFile));
 		
@@ -444,5 +486,5 @@ public class UploadFile {
 			formUpload(URL_WHOLE_FILE_UPLOAD, entityMap, fileMap);
 		}
 	}
-    
+
 }

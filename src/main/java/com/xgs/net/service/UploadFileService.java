@@ -12,12 +12,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.xgs.net.help.DateStyle;
 import com.xgs.net.help.DateUtil;
 import com.xgs.net.help.UUIDHexGenerator;
-import com.xgs.net.model.ChunkFile;
-import com.xgs.net.model.FileMark;
-import com.xgs.net.model.FileUpload;
-import com.xgs.net.model.UploadWholeFile;
-import com.xgs.net.model.WholeChunkMapping;
-import com.xgs.net.model.WholeFile;
+import com.xgs.net.model.*;
 
 
 public class UploadFileService {
@@ -165,7 +160,6 @@ public class UploadFileService {
 	}
 	/**
 	 * 保存整个文件上传的文件信息
-	 * @param wholeMd5
 	 * @param fileName
 	 * @param fileExt
 	 * @param mimeType
@@ -266,5 +260,17 @@ public class UploadFileService {
 	public void deleteSliceUploadFile(String fileId) {
 		String sql = " delete from file_upload where id = ? ";
 		Db.update(sql, fileId);
+	}
+
+	public String saveFile(String pathInfo){
+		String fileId = UUIDHexGenerator.getId();
+		FileInfo file = new FileInfo();
+		file.setId(fileId);
+		file.setPathInfo(pathInfo);
+		file.save();
+		return fileId;
+	}
+	public FileInfo findFile(String fileId){
+		return FileInfo.dao.findById(fileId);
 	}
 }

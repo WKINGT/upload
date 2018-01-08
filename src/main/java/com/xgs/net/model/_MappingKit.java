@@ -17,6 +17,7 @@ public class _MappingKit {
 
 	public static void mapping(ActiveRecordPlugin arp) {
 		arp.addMapping("chunk_file", "chunk_md5", ChunkFile.class);
+		arp.addMapping("file_info", "id", FileInfo.class);
 		arp.addMapping("file_mark", "file_id", FileMark.class);
 		arp.addMapping("file_upload", "id", FileUpload.class);
 		arp.addMapping("upload_whole_file", "id", UploadWholeFile.class);

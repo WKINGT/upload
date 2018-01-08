@@ -4,6 +4,10 @@ package com.xgs.net.app;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +17,8 @@ import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 
+import com.jfinal.kit.Prop;
+import com.xgs.net.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.impl.Log4jLoggerFactory;
@@ -32,11 +38,6 @@ import com.xgs.net.help.FileUtil;
 import com.xgs.net.help.GetBigFileMD5;
 import com.xgs.net.help.GetName;
 import com.xgs.net.help.UUIDHexGenerator;
-import com.xgs.net.model.ChunkFile;
-import com.xgs.net.model.FileMark;
-import com.xgs.net.model.FileUpload;
-import com.xgs.net.model.UploadWholeFile;
-import com.xgs.net.model.WholeFile;
 import com.xgs.net.service.UploadFileService;
 
 public class TestUpload extends Controller{
@@ -532,5 +533,49 @@ public class TestUpload extends Controller{
 		RespEntity msg = new RespEntity();
 		msg.setCode(1);
 		this.renderJson(msg);
+	}
+	public void downLoadFormUrl() throws Exception {
+		String httpRegx = "^http.*";
+//		String test = this.getPara();
+		String pUrl = this.getPara("url");
+		String ext = pUrl.substring(pUrl.lastIndexOf(".") + 1, pUrl.length());
+		if(!pUrl.matches(httpRegx)){
+			pUrl = "http:"+pUrl;
+		}
+		String pathInfo = FileUtil.FILEDIR + File.separator
+				+ UUIDHexGenerator.getId() + "." + ext;
+		URL uri = new URL(pUrl);
+		InputStream in = uri.openStream();
+		FileOutputStream fo = new FileOutputStream(new File(pathInfo));//文件输出流
+		byte[] buf = new byte[1024];
+		int length = 0;
+		System.out.println("开始下载:" + pUrl);
+		while ((length = in.read(buf, 0, buf.length)) != -1) {
+			fo.write(buf, 0, length);
+		}
+		//关闭流
+		in.close();
+		fo.close();
+		String fileId = uploadFileService.saveFile( pathInfo);
+		System.out.println(pUrl + "下载完成");
+		RespEntity entity = new RespEntity();
+		entity.setSucc(true);
+		entity.setCode(0);
+		entity.setText("接受整个文件成功！");
+		entity.setFileId(fileId);
+		this.renderJson(JsonKit.toJson(entity));
+	}
+	public void download(){
+		String id = this.getPara();
+		System.out.println("test"+id);
+		if(id==null){
+			return;
+		}
+		FileInfo fileInfo = uploadFileService.findFile(id);
+		if(fileInfo!=null) {
+			File file = new File(fileInfo.getPathInfo());
+			this.renderFile(file);
+		}
+		return;
 	}
 }

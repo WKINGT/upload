@@ -1,6 +1,6 @@
-jdbcUrl=jdbc:mysql://192.168.10.100:3306/test?useUnicode=true&characterEncoding=utf-8
+jdbcUrl=jdbc:mysql://192.168.10.210:3306/test?useUnicode=true&characterEncoding=utf-8
 user=root
-password=
+password=root
 max_poll=100
 min_poll=10
 validation_query=select 1

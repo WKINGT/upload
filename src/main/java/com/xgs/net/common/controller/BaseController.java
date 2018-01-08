@@ -8,6 +8,5 @@ package com.xgs.net.common.controller;
  */
 public class BaseController {
 	
-	
-	
+
 }
